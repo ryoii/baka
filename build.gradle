@@ -1,0 +1,51 @@
+plugins {
+    id 'java'
+}
+
+group = 'cn.ryoii'
+version = '0.1.0'
+
+def junitVersion = '5.8.0'
+def jmhGroup = 'org.openjdk.jmh'
+def jmhVersion = '1.33'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: junitVersion
+    testImplementation group: jmhGroup, name: 'jmh-core', version: jmhVersion
+    testAnnotationProcessor group: jmhGroup, name: 'jmh-generator-annprocess', version: jmhVersion
+}
+
+task benchmark(type: Test) {
+    useJUnitPlatform {
+        includeTags 'bench'
+    }
+
+    testLogging {
+        events "STANDARD_OUT"
+    }
+}
+
+test {
+    useJUnitPlatform() {
+        excludeTags 'slow', 'debug', 'bench'
+    }
+
+    testLogging {
+        events "FAILED", "STANDARD_OUT", "STANDARD_ERROR"
+
+        // test result collection
+        afterSuite { desc, result ->
+            if (!desc.parent) { // will match the outermost suite
+                def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)" as Object
+                def startItem = '|  ', endItem = '  |'
+                def repeatLength = startItem.length() + output.length() + endItem.length()
+                println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength) + '\n')
+            }
+        }
+    }
+}
