@@ -14,7 +14,11 @@ class HashIndexManager implements IndexManager {
 
     @Override
     public void put(BakaHint hint) {
-        map.put(hint.key, hint);
+        if (hint.valueSize == 0) {
+            map.remove(hint.key);
+        } else {
+            map.put(hint.key, hint);
+        }
     }
 
     @Override

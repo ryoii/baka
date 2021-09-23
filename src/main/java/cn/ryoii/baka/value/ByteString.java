@@ -2,10 +2,11 @@ package cn.ryoii.baka.value;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public final class ByteString {
+
+    public static final ByteString EMPTY = ByteString.copyFrom(new byte[0]);
 
     private final byte[] bytes;
     private int hash;

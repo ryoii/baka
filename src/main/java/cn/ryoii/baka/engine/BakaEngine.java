@@ -71,4 +71,11 @@ public class BakaEngine extends ReadWriteEngine {
         return dataFiles.get(hint.fileId).readValue(hint.valuePosition, hint.valueSize);
     }
 
+    public void remove(ByteString key) throws IOException {
+        putInternal(key, ByteString.EMPTY);
+    }
+
+    public boolean exist(ByteString key) {
+        return indexManager.get(key) != null;
+    }
 }

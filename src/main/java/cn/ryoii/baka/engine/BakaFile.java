@@ -82,6 +82,10 @@ class BakaFile implements AutoCloseable {
     }
 
     ByteString readValue(long position, int valueSize) throws IOException {
+        if (valueSize == 0) {
+            return ByteString.EMPTY;
+        }
+
         ByteBuffer value = ioStrategy.read(readCh, position, valueSize);
         return ByteString.copyFrom(value);
     }
@@ -227,12 +231,12 @@ class BakaFile implements AutoCloseable {
         int keySize = header.getInt();
         int valueSize = header.getInt();
 
-        ByteBuffer kv = ioStrategy.read(readCh, position + BakaEntry.DATA_HEADER_SIZE, keySize);
-        if (kv.remaining() != keySize) {
+        ByteBuffer keyBuffer = ioStrategy.read(readCh, position + BakaEntry.DATA_HEADER_SIZE, keySize);
+        if (keyBuffer.remaining() != keySize) {
             throw new ReadEntryFailedException(fileId, position);
         }
 
-        ByteString key = ByteString.copyFrom(kv, keySize);
+        ByteString key = ByteString.copyFrom(keyBuffer, keySize);
 
         return new BakaEntry(crc, timestamp, keySize, valueSize, key, null);
     }

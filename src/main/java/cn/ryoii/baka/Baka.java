@@ -59,6 +59,18 @@ public class Baka implements AutoCloseable {
         return null;
     }
 
+    public void remove(String key) {
+        try {
+            engine.remove(ByteString.copyFrom(key, DEFAULT_CHARSET));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public boolean exist(String key) {
+        return engine.exist(ByteString.copyFrom(key, DEFAULT_CHARSET));
+    }
+
     @Override
     public void close() {
         engine.close();
